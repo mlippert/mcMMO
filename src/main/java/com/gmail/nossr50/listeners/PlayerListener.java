@@ -39,6 +39,7 @@ import com.gmail.nossr50.datatypes.party.Party;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.AbilityType;
 import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.datatypes.skills.ToolType;
 import com.gmail.nossr50.locale.LocaleLoader;
 import com.gmail.nossr50.party.ShareHandler;
 import com.gmail.nossr50.runnables.player.PlayerProfileLoadingTask;
@@ -533,10 +534,10 @@ public class PlayerListener implements Listener {
 
         McMMOPlayer mcMMOPlayer = UserManager.getPlayer(player);
         ItemStack heldItem = player.getItemInHand();
+        Block block = event.getClickedBlock();
 
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
-                Block block = event.getClickedBlock();
                 BlockState blockState = block.getState();
 
                 /* ACTIVATION & ITEM CHECKS */
@@ -587,6 +588,7 @@ public class PlayerListener implements Listener {
                     mcMMOPlayer.processAbilityActivation(SkillType.SWORDS);
                     mcMMOPlayer.processAbilityActivation(SkillType.UNARMED);
                     mcMMOPlayer.processAbilityActivation(SkillType.WOODCUTTING);
+                    mcMMOPlayer.processAbilityActivation(SkillType.TAMING);
                 }
 
                 /* ITEM CHECKS */
@@ -601,6 +603,12 @@ public class PlayerListener implements Listener {
                 break;
 
             case LEFT_CLICK_AIR:
+                if (mcMMOPlayer.getToolPreparationMode(ToolType.BONE) && ToolType.BONE.inHand(heldItem)) {
+                    mcMMOPlayer.checkAbilityActivation(SkillType.TAMING);
+                }
+
+                // Fallthrough
+
             case LEFT_CLICK_BLOCK:
 
                 if (!player.isSneaking()) {
